@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Digit Recognizer using TensorFlow.js Demo</title>
+
+	<link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/app.css">
+	<style>
+		#webcontainer {
+			margin: 0px auto;
+			width: 500px;
+			height: 375px;
+			border: 10px #333 solid;
+		}
+		#videoElement {
+			width: 500px;
+			height: 375px;
+			background-color: #666;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="digit-demo-container">
+			<h3 id="digit-recognizer-live-demo">Digit Recognizer using TensorFlow.js Demo</h3>
+			<div class="flex-two" style="margin-top: 20px;">
+				<button id="clear_canvas" class="material-button-pink" onclick="clearCanvas(this.id)">Clear</button>
+				<select id="select_model">
+					<option>CNN</option>
+					<option>MLP</option>
+				</select>
+				<button id="predict_canvas" class="material-button-pink" onclick="webPredict(this.id)">Predict</button>
+			</div>
+			<div class="flex-two">
+				<div id="canvas_box_wrapper" class="canvas-box-wrapper">
+					<div id="canvas_box" class="canvas-box"></div>
+				</div>
+				<div id="result_box">
+					<canvas id="chart_box" width="100" height="100"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="webcontainer">
+	<video autoplay="true" id="videoElement">
+
+	</video>
+	</div>
+
+	<input type="file" onchange='captureCam(event)' name="image" accept="image/*" capture="environment">
+
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.15.3"></script>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+	<script type="text/javascript" src="js/app.js"></script>
+</body>
+</html>
