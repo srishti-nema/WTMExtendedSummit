@@ -2,16 +2,12 @@
 // GLOBAL variables
 //-------------------
 var modelName = "cnn";
-let model;
+var model;
 
 var canvasWidth           	= 150;
 var canvasHeight 			= 150;
-var canvasStrokeStyle		= "white";
-var canvasLineJoin			= "round";
-var canvasLineWidth       	= 10;
 var canvasBackgroundColor 	= "black";
 var canvasId              	= "canvas";
-
 
 document.getElementById('chart_box').innerHTML = "";
 document.getElementById('chart_box').style.display = "none";
@@ -31,23 +27,20 @@ if(typeof G_vmlCanvasManager != 'undefined') {
   canvas = G_vmlCanvasManager.initElement(canvas);
 }
 
-ctx = canvas.getContext("2d");
-
-//-----------------------
-// select model handler
-//-----------------------
-$('input:radio[name="model_select"]').change(function(){
-    console.log($(this).val());
-    if($(this).val() === 'MLP'){
-        modelName = "mlp";
-    } else if ($(this).val() === "CNN") {
-        modelName = "cnn";
+//------------------------
+// Clear Canvas and Chart function
+//------------------------
+function clearCanvas() {
+	var context = canvas.getContext("2d");
+    context.clearRect(0, 0, canvasWidth, canvasHeight);
+    if(chart){
+        chart.destroy();
     }
-    loadModel(modelName);
-});
+}
 
-/// LOAD WEBCAM
-
+//-----------------------
+// Load Webcam
+//-----------------------
 var video = document.querySelector("#videoElement");
 
 if (navigator.mediaDevices.getUserMedia) {
@@ -68,10 +61,12 @@ function stopWebCam(e) {
 	  var track = tracks[i];
 	  track.stop();
 	}
-
 	video.srcObject = null;
 }
 
+//---------------------------
+// Take Picture from Webcam
+//---------------------------
 function takePicture() {
     var context =  canvas.getContext("2d");
     var w = 150,h = 150;
@@ -81,13 +76,9 @@ function takePicture() {
     context.drawImage(video, 0, 0, w, h);
 }
 
-
-function captureCam(evt) {
-	console.log(evt);
-	handleImage(evt);
-}
-
-
+//---------------------------
+// Upload Picture from File
+//---------------------------
 function handleImage(e){
     var reader = new FileReader();
     reader.onload = function(event){
@@ -106,20 +97,22 @@ function handleImage(e){
     reader.readAsDataURL(e.target.files[0]);
 }
 
-
-//------------------------
-// CLEAR CANVAS function
-//------------------------
-function clearCanvas() {
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-    if(chart){
-        chart.destroy();
+//-----------------------
+// Select Model
+//-----------------------
+$('input:radio[name="model_select"]').change(function(){
+    console.log($(this).val());
+    if($(this).val() === 'MLP'){
+        modelName = "mlp";
+    } else if ($(this).val() === "CNN") {
+        modelName = "cnn";
     }
-}
+    loadModel(modelName);
+});
 
-//-------------------------------------
-// loader for sign language recognizer model
-//-------------------------------------
+//--------------------------------------------
+// Loader for sign language recognizer model
+//--------------------------------------------
 async function loadModel(modelName) {
     console.log("model loading..");
 
@@ -134,7 +127,7 @@ async function loadModel(modelName) {
 loadModel(modelName);
 
 //-----------------------------------------------
-// preprocess the canvas to be MLP friendly
+// Preprocess the canvas to be MLP/CNN friendly
 //-----------------------------------------------
 function preprocessCanvas(image, modelName) {
 
@@ -143,10 +136,10 @@ function preprocessCanvas(image, modelName) {
 		alert("No model defined..")
 	}
 
-	// if model is digitrecognizermlp, perform all the preprocessing
+	// if model is mlp, perform all the preprocessing
 	else if (modelName === "mlp") {
 
-		// resize the input image to digitrecognizermlp's target size of (784, )
+		// resize the input image to mlp's target size of (784, )
 		let tensor = tf.browser.fromPixels(image)
 		    .resizeNearestNeighbor([28, 28])
 		    .mean(2)
@@ -155,9 +148,9 @@ function preprocessCanvas(image, modelName) {
 		return tensor.div(255.0);
 	}
 
-	// if model is digitrecognizercnn, perform all the preprocessing
+	// if model is cnn, perform all the preprocessing
 	else if (modelName === "cnn") {
-		// resize the input image to digitrecognizermlp's target size of (1, 28, 28)
+		// resize the input image to cnn's target size of (1, 28, 28)
 		let tensor = tf.browser.fromPixels(image)
 		    .resizeNearestNeighbor([28, 28])
 		    .mean(2)
@@ -174,14 +167,14 @@ function preprocessCanvas(image, modelName) {
 	}
 }
 
-// [10, 20, 30] => [[10,0], [20, 1], [30, 2]]
+// Returns the index of the max element in the array
 function argMax(array) {
 	return array.map((x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
 }
 
-//--------------------------------------------
-// predict function for digit recognizer mlp
-//--------------------------------------------
+//------------------------------------------------
+// Predict function for sign language recognizer
+//------------------------------------------------
 async function predict() {
 	// preprocess canvas
 	let tensor = preprocessCanvas(canvas, modelName);
@@ -199,15 +192,14 @@ async function predict() {
 	console.log(predictedLetter);
 }
 
-
 //------------------------------
 // Chart to display predictions
 //------------------------------
 var chart = "";
 var firstTime = 0;
 function loadChart(label, data, modelSelected) {
-	var ctx = document.getElementById('chart_box').getContext('2d');
-	chart = new Chart(ctx, {
+	var context = document.getElementById('chart_box').getContext('2d');
+	chart = new Chart(context, {
 	    // The type of chart we want to create
 	    type: 'bar',
 
@@ -227,12 +219,10 @@ function loadChart(label, data, modelSelected) {
 	});
 }
 
-//----------------------------
-// display chart with updated
-// drawing from canvas
-//----------------------------
+//-------------------------------------------------------------
+// Display prediction chart with updated drawing from canvas
+//-------------------------------------------------------------
 function displayChart(data) {
-	var select_model  = document.getElementById("select_model");
   	var select_option = modelName;
 
 	label = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
@@ -245,5 +235,3 @@ function displayChart(data) {
 	}
 	document.getElementById('chart_box').style.display = "block";
 }
-
-
