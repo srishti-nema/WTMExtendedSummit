@@ -26,8 +26,8 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-4 text-center">
-                <h2 class="mt-5">Input</h2>
-                <div class="webcontainer mb-2">
+                <h2 class="mt-4">Input</h2>
+                <div class="webcontainer">
                     <video autoplay="true" id="videoElement"></video>
                 </div>
                 <div style="display:inline">
@@ -37,8 +37,8 @@
                 </div>
             </div>
             <div class="col-md-4 p-3 text-center">
-                <h2 class="mt-5">Model</h2>
-                <div class="mt-5 mb-5">
+                <h2 class="mt-4">Model</h2>
+                <div class="mt-5 mb-2">
                     <label class="radio-inline ml-2"><input type="radio" name="model_select" value="MLP"> MLP</label>
                     <label class="radio-inline ml-2"><input type="radio" name="model_select" value="CNN" checked> CNN</label>
                 </div>
@@ -54,10 +54,15 @@
                 </div>
             </div>
             <div class="col-md-4 text-center">
-                <h2 class="mt-5">Output</h2>
+                <h2 class="mt-4">Output</h2>
                 <div id="result_box">
                     <canvas id="chart_box" width="100" height="100"></canvas>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mx-auto text-center">
+                 <img src="css/images/amer_sign2.png" width="500" height="350">
             </div>
         </div>
     </div>
